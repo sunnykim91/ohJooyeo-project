@@ -1,0 +1,12 @@
+.content-container {
+    display: flex;
+    width:100%;
+    float : right
+}
+.content-container .left {
+    position: relative;
+}
+
+.content-container .right {
+    position: relative;
+}

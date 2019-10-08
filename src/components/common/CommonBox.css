@@ -1,0 +1,13 @@
+
+.content-container .left {
+  max-width: 50%;
+  background-color: rebeccapurple;
+  flex: 1 1 auto;
+  overflow:scroll;
+ }
+.content-container .right {
+    max-width: 50%;
+    background-color:skyblue;
+    flex: 1 1 auto;
+    overflow:scroll;
+  } 

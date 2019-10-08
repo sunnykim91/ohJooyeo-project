@@ -1,0 +1,97 @@
+.container .register-right {
+    width:400px;
+  }
+  .container .register-right p {
+    color: #606060;
+  }
+  .container .register-right .card {
+    display: flex;
+    flex-direction: column;
+  }
+  .container .register-right .card div[class^="card--"] {
+    margin: 1rem 0;
+  }
+  .container .register-right .card--desc h2 {
+    color: #212121;
+    padding-bottom: 1rem;
+  }
+  .container .register-right .card--register {
+    flex: 1;
+  }
+  .container .register-right .card--register form {
+    display: flex;
+    flex-direction: column;
+  }
+  .container .register-right .card--register form input {
+    border: none;
+    margin: 2px 0;
+  }
+  .container .register-right .card--register form input:not([type="button"]) {
+    position: relative;
+    height: 45px;
+    padding-left: 15px;
+    border-bottom: 2px solid rgba(96, 96, 96, .2);
+    border-radius: 8px;
+    transition: 0.5s all ease;
+  }
+  .container .register-right .card--register form input:not([type="button"]):focus {
+    outline: none;
+    border-bottom: 2px solid #c32aa3;
+  }
+  .container .register-right .card--register form .agree {
+    display: flex;
+    align-items: center;
+  }
+  .container .register-right .card--register form .agree label {
+    margin-left: 15px;
+    font-size: 0.9rem;
+  }
+  .container .register-right .card--register form input[type="button"] {
+    background: #f78fad;
+    color: white;
+    font-size: 0.8rem;
+    width: 100px;
+    height: 30px;
+    border-radius: 25px;
+    align-self: flex-end;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+  .container .register-right .card--register form input[type="button"]:hover {
+    background: #ef5a5c;
+  }
+  .container .register-right .card--socialmedia p {
+    margin-bottom: 1.2rem;
+  }
+  .container .register-right .card--socialmedia .party {
+    display: flex;
+    justify-content: space-between;
+  }
+  .container .register-right .card--socialmedia .party .media {
+    padding: 5px 10px;
+    border-radius: 25px;
+    color: white;
+    font-size: 0.9rem;
+  }
+  .container .register-right .card--socialmedia .party .facebook {
+    background: #3b5998;
+  }
+  .container .register-right .card--socialmedia .party .facebook:hover {
+    background: #2d4677;
+  }
+  .container .register-right .card--socialmedia .party .twitter {
+    background: #1dcaff;
+  }
+  .container .register-right .card--socialmedia .party .twitter:hover {
+    background: #15baed;
+  }
+  .container .register-right .card--socialmedia .party .instagram {
+    background: #c32aa3;
+  }
+  .container .register-right .card--socialmedia .party .instagram:hover {
+    background: #ad2690;
+  }
+  .policy-container {
+      align-items: right;
+  }
+  
