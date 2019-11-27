@@ -7,7 +7,7 @@ class OrderList extends Component {
     render() {
         const {orderContents} = this.props;
         const orders = orderContents.map((order,idx) => (
-            <Order key={idx} contents={order}/>
+            <Order key={"order"+idx} contents={order}/>
         ))
 
         return (

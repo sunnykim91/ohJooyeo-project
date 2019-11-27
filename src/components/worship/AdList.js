@@ -8,7 +8,7 @@ class AdList extends Component {
     render() {
         const {adContents} = this.props;
         const ads = adContents.map((ad,idx) => (
-            <Ad key={idx} contents={ad}/>
+            <Ad key={"ad"+idx} contents={ad}/>
         ))
 
         return (
