@@ -1,0 +1,68 @@
+.worshipArea {
+  background: linear-gradient(
+    135deg,
+    #2de589 0%,
+    #2d9bef 79%,
+    #207cca 99%,
+    #2de589 99%,
+    #207cca 99%,
+    #2989d8 100%,
+    #7db9e8 100%,
+    #2de589 101%
+  );
+  float: left;
+  width: 49%;
+}
+
+.adArea {
+  background: linear-gradient(
+    135deg,
+    #2de589 0%,
+    #2d9bef 79%,
+    #207cca 99%,
+    #2de589 99%,
+    #207cca 99%,
+    #2989d8 100%,
+    #7db9e8 100%,
+    #2de589 101%
+  );
+  float: right;
+  width: 49%;
+}
+
+.worshipItem {
+  display: flex;
+  background: white;
+  margin: 10px;
+  justify-content: space-between;
+}
+
+.worshipItem-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+}
+.worshipItem-content:nth-child(1) {
+  margin-left: 20px;
+}
+
+.worshipItem-button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.addItem-area {
+  background: white;
+  margin: 10px;
+  height: 100px;
+}
+.addItem-content {
+  background: white;
+  display: flex;
+  justify-content: space-between;
+}
+.addItem-button {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -42,6 +42,14 @@ const Main = () => {
       });
   };
 
+  const getPrevMonthJuboList = () => {
+    console.log('hi');
+  };
+
+  const getNextMonthJuboList = () => {
+    console.log('hello');
+  };
+
   useEffect(() => {
     getJuboList();
   }, []);
@@ -50,11 +58,11 @@ const Main = () => {
     <Container>
       <div className='dataFilter'>
         <Fab color='primary' aria-label='add'>
-          <ChevronLeftIcon />
+          <ChevronLeftIcon onClick={() => getPrevMonthJuboList()} />
         </Fab>
         <div className='todayMonth'>11월</div>
         <Fab color='secondary' aria-label='edit'>
-          <ChevronRightIcon />
+          <ChevronRightIcon onClick={() => getNextMonthJuboList()} />
         </Fab>
       </div>
       <div className='juboList'>

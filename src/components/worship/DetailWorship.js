@@ -15,6 +15,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import CancelIcon from '@material-ui/icons/Cancel';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import './DetailWorship.css';
 
 const drawerWidth = 240;
 
@@ -23,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex'
   },
   appBar: {
+    background: `#2AE0A9`,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -57,8 +65,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end'
   },
   content: {
+    height: `100vh`,
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(12, 4),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -74,7 +83,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const DetailWorship = ({ match }) => {
-  const [worshipInfo, setWorshipInfo] = useState([]);
+  const [worshipInfo, setWorshipInfo] = useState({
+    mainPresenter: '김선휘',
+    worshipOrder: [
+      { presenter: '손흥민', orderId: 1, detail: '', title: '경배와 찬양' },
+      { presenter: '데브라이너', orderId: 2, detail: '', title: '기도' },
+      {
+        presenter: '박지성',
+        orderId: 3,
+        detail: '창세기 1:1~1:10',
+        title: '성경봉독'
+      }
+    ]
+  });
+  const [activeAddButton, setActiveAddButton] = useState(true);
+  const [worshipOrderNumber, setWorshiptOrderNumber] = useState(true);
 
   const getWorshipInfo = async () => {
     const baseURL = 'http://aaaicu.synology.me:8088/OhJooYeoMVC';
@@ -92,8 +115,36 @@ const DetailWorship = ({ match }) => {
       });
   };
 
+  const addItemButtonClick = () => {
+    setWorshiptOrderNumber(getWorshiptOrderNumber());
+    setActiveAddButton(false);
+  };
+
+  const addWorshipItem = () => {
+    console.log('hello');
+  };
+
+  const cancelAddItem = () => {
+    setActiveAddButton(true);
+  };
+
+  const getWorshiptOrderNumber = () => {
+    return !worshipInfo.worshipOrder.length
+      ? 1
+      : Math.max(...worshipInfo.worshipOrder.map(worship => worship.orderId)) +
+          1;
+  };
+
+  const modifyItem = id => {
+    console.log(id);
+  };
+
+  const deleteItem = id => {
+    console.log(id);
+  };
+
   useEffect(() => {
-    getWorshipInfo();
+    // getWorshipInfo();
   }, []);
 
   const classes = useStyles();
@@ -108,88 +159,121 @@ const DetailWorship = ({ match }) => {
     setOpen(false);
   };
   return (
-    <div>
-      여긴 상세 페이지
-      {match.params.id}
-      <div>
-        {worshipInfo.map(wInfo => (
-          <div key={wInfo.orderId}>{wInfo.presenter}</div>
-        ))}
-      </div>
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar
-          position='fixed'
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open
-          })}
-        >
-          <Toolbar>
-            <IconButton
-              color='inherit'
-              aria-label='open drawer'
-              onClick={handleDrawerOpen}
-              edge='start'
-              className={clsx(classes.menuButton, open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant='h6' noWrap>
-              Persistent drawer
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          className={classes.drawer}
-          variant='persistent'
-          anchor='left'
-          open={open}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-        >
-          <div className={classes.drawerHeader}>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? (
-                <ChevronLeftIcon />
-              ) : (
-                <ChevronRightIcon />
-              )}
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-        </Drawer>
-        <main
-          className={clsx(classes.content, {
-            [classes.contentShift]: open
-          })}
-        >
-          <div className={classes.drawerHeader} />
-          <Typography paragraph>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-            dolor purus non enim praesent elementum facilisis leo vel. Risus at
-            ultrices mi tempus imperdiet. Semper risus in hendrerit gravida
-            rutrum quisque non tellus. Convallis convallis tellus id interdum
-            velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean
-            sed adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-            integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-            eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-            quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-            vivamus at augue. At augue eget arcu dictum varius duis at
-            consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-            donec massa sapien faucibus et molestie ac.
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar
+        position='fixed'
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color='inherit'
+            aria-label='open drawer'
+            onClick={handleDrawerOpen}
+            edge='start'
+            className={clsx(classes.menuButton, open && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant='h6' noWrap>
+            {match.params.id} 주보&광고 편집
           </Typography>
-        </main>
-      </div>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        className={classes.drawer}
+        variant='persistent'
+        anchor='left'
+        open={open}
+        classes={{
+          paper: classes.drawerPaper
+        }}
+      >
+        <div className={classes.drawerHeader}>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </div>
+        <Divider />
+        <List>
+          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem button key={text}>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </Drawer>
+      <main
+        className={clsx(classes.content, {
+          [classes.contentShift]: open
+        })}
+      >
+        <div className='worshipArea'>
+          <ul>
+            {worshipInfo.worshipOrder.map(wsInfo => (
+              <li className='worshipItem' key={wsInfo.orderId}>
+                <div className='worshipItem-content'>
+                  <div>{wsInfo.orderId}</div>
+                  <div>제목 : {wsInfo.title}</div>
+                  <div>발표자 : {wsInfo.presenter}</div>
+                </div>
+                <div className='worshipItem-button'>
+                  <IconButton
+                    aria-label='edit'
+                    onClick={() => modifyItem(wsInfo.orderId)}
+                  >
+                    <EditIcon fontSize='small' />
+                  </IconButton>
+                  <IconButton
+                    aria-label='delete'
+                    onClick={() => deleteItem(wsInfo.orderId)}
+                  >
+                    <DeleteIcon fontSize='small' />
+                  </IconButton>
+                </div>
+              </li>
+            ))}
+            {activeAddButton ? (
+              <li>
+                <Fab aria-label='add' onClick={() => addItemButtonClick()}>
+                  <AddIcon />
+                </Fab>
+              </li>
+            ) : (
+              <div className='addItem-area'>
+                <div className='addItem-content'>
+                  <div> 순서 : {worshipOrderNumber}</div>
+                  <div> 제목: </div>
+                  <div> 세부내용: </div>
+                  <div> 발표자 : </div>
+                </div>
+                <div className='addItem-button'>
+                  <IconButton
+                    aria-label='addItem'
+                    onClick={() => addWorshipItem()}
+                  >
+                    <AddCircleIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label='addItem'
+                    onClick={() => cancelAddItem()}
+                  >
+                    <CancelIcon />
+                  </IconButton>
+                </div>
+              </div>
+            )}
+          </ul>
+        </div>
+        <div className='adArea'>여기는 광고 영역</div>
+      </main>
     </div>
   );
 };
