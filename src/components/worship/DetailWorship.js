@@ -1,44 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import Axios from 'axios';
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import CancelIcon from '@material-ui/icons/Cancel';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useCallback } from "react";
+import Axios from "axios";
+import clsx from "clsx";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import CancelIcon from "@material-ui/icons/Cancel";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
 
-import './DetailWorship.css';
+import "./DetailWorship.css";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex'
+    display: "flex"
   },
   appBar: {
     background: `#2AE0A9`,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     })
@@ -46,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen
     })
@@ -55,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2)
   },
   hide: {
-    display: 'none'
+    display: "none"
   },
   drawer: {
     width: drawerWidth,
@@ -65,24 +64,24 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth
   },
   drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end"
   },
   content: {
     height: `100vh`,
     flexGrow: 1,
     padding: theme.spacing(12, 4),
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
     marginLeft: -drawerWidth
   },
   contentShift: {
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen
     }),
@@ -101,57 +100,100 @@ const formStyles = makeStyles(theme => ({
 }));
 
 const DetailWorship = ({ match }) => {
-  const [worshipInfo, setWorshipInfo] = useState({
-    mainPresenter: '김선휘',
-    worshipOrder: [
+  const [worshipDetailForSend, setWorshipDetailForSend] = useState({
+    "worshipInfo": {
+      "churchId": 1,
+      "worshipDate": "2019-12-16",
+      "mainPresenter": "사회자",
+      "nextPresenter": "다음사회자",
+      "nextPrayer": "다음기도자",
+      "nextOffer": "다음봉헌자"
+    },
+
+    "worshipOrder": [
       {
-        type: 0,
-        title: '경배와 찬양',
-        detail: '',
-        presenter: '손흥민',
-        standupYn: 0,
-        order: 1,
-        orderId: 1
+        "type": 0,
+        "title": "경배와 찬양",
+        "detail": "",
+        "presenter": "헤세드 찬양단",
+        "standupYn": 0,
+        "order": 1,
+        "orderId": 1
       },
       {
-        type: 0,
-        title: '기도',
-        detail: '',
-        presenter: '데브라이너',
-        standupYn: 0,
-        order: 2,
-        orderId: 2
+        "type": 1,
+        "title": "말씀",
+        "detail": "행복의 노래",
+        "presenter": "강인호 목사님",
+        "standupYn": 0,
+        "order": 2,
+        "orderId": 2
       },
       {
-        type: 0,
-        title: '성경봉독',
-        detail: '창세기 1:1~1:10',
-        presenter: '박지성',
-        standupYn: 0,
-        order: 3,
-        orderId: 3
+        "type": 1,
+        "title": "말씀고고",
+        "detail": "행복의 노래고고",
+        "presenter": "강인호우 목사님",
+        "standupYn": 0,
+        "order": 3,
+        "orderId": 3
+      }
+    ],
+
+    "worshipAd": [
+      {
+        "title": "다시한번 테스트",
+        "content": "돈암동교회 청년부에 오신 여러분 환영합니다.",
+        "order": 1,
+        "adId": 1
+      },
+      {
+        "title": "1330 기도회",
+        "content": "예배전 기도회가 있어요ㅎㅎㅎ",
+        "order": 2,
+        "adId": 2
       }
     ]
   });
+
+  const [worshipDetailForReceive, setWorshipDetailForReceive] = useState({
+    "nextPresenter": {},
+    "mainPresenter": "",
+    "worshipOrder": [],
+    "version": 0
+  });
+
   const [activeAddButton, setActiveAddButton] = useState(true);
   const [worshipOrderNumber, setWorshiptOrderNumber] = useState(true);
-  const [title, setTitle] = useState('');
-  const [detail, setDetail] = useState('');
-  const [presenter, setPresenter] = useState('');
-  const [order, setOrder] = useState();
+  const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState("");
+  const [presenter, setPresenter] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [directTitleInput, setDirectTitleInput] = useState(true);
 
   const getWorshipInfo = async () => {
-    const baseURL = 'http://aaaicu.synology.me:8088/OhJooYeoMVC';
+    const baseURL = "http://aaaicu.synology.me:8088/OhJooYeoMVC";
     await Axios.post(`${baseURL}/worship/info/`, {
-      'churchId': 1,
-      'worshipId': `${match.params.id}`,
-      'version': 0
+      churchId: 1,
+      worshipId: `${match.params.id}`,
+      version: 0
     })
       .then(response => {
         console.log(response.data);
-        setWorshipInfo(response.data.worshipOrder);
+        setWorshipDetailForReceive(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const saveWorshipInfo = async () => {
+    const baseURL = "http://aaaicu.synology.me:8088/OhJooYeoMVC";
+    await Axios.post(`${baseURL}/worship/add/`, worshipDetailForSend)
+      .then(response => {
+        console.log(response);
+        // setWorshipInfo(response.data);
       })
       .catch(error => {
         console.log(error);
@@ -166,18 +208,20 @@ const DetailWorship = ({ match }) => {
   };
 
   const addWorshipItem = () => {
-    setWorshipInfo(prevWorshipInfo => [
-      ...prevWorshipInfo.worshipOrder,
-      {
+    setWorshipDetailForReceive(prevworshipDetailForReceive => {
+      prevworshipDetailForReceive.worshipOrder.push({
         type: 0,
-        title: 'ddd',
-        detail: 'dddee',
-        presenter: 'eqwer',
+        title,
+        detail,
+        presenter,
         standupYn: 0,
-        order: 4,
-        orderId: 4
-      }
-    ]);
+        order: getWorshiptOrderNumber(),
+        orderId: getWorshiptOrderNumber()
+      });
+      console.log(prevworshipDetailForReceive);
+      return prevworshipDetailForReceive;
+    });
+    setActiveAddButton(true);
   };
 
   const cancelAddItem = () => {
@@ -185,10 +229,13 @@ const DetailWorship = ({ match }) => {
   };
 
   const getWorshiptOrderNumber = () => {
-    return !worshipInfo.worshipOrder.length
+    return !worshipDetailForReceive.worshipOrder.length
       ? 1
-      : Math.max(...worshipInfo.worshipOrder.map(worship => worship.orderId)) +
-          1;
+      : Math.max(
+          ...worshipDetailForReceive.worshipOrder.map(
+            worship => worship.orderId
+          )
+        ) + 1;
   };
 
   const modifyItem = id => {
@@ -196,7 +243,15 @@ const DetailWorship = ({ match }) => {
   };
 
   const deleteItem = id => {
-    console.log(id);
+    setWorshipDetailForReceive(prevworshipDetailForReceive => {
+      prevworshipDetailForReceive.worshipOrder = prevworshipDetailForReceive.worshipOrder.filter(
+        worship => worship.orderId !== id
+      );
+      console.log(prevworshipDetailForReceive);
+      return prevworshipDetailForReceive;
+    });
+    setDeleteLoading(true);
+    setTimeout(() => setDeleteLoading(false), 1500);
   };
 
   const titleChange = e => {
@@ -212,9 +267,8 @@ const DetailWorship = ({ match }) => {
   };
 
   useEffect(() => {
-    // getWorshipInfo();
-    console.log(worshipInfo);
-  }, [worshipInfo]);
+    getWorshipInfo();
+  }, []);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -262,7 +316,7 @@ const DetailWorship = ({ match }) => {
       >
         <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? (
+            {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
               <ChevronRightIcon />
@@ -271,7 +325,7 @@ const DetailWorship = ({ match }) => {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
             <ListItem button key={text}>
               <ListItemText primary={text} />
             </ListItem>
@@ -286,7 +340,7 @@ const DetailWorship = ({ match }) => {
       >
         <div className='worshipArea'>
           <ul>
-            {worshipInfo.worshipOrder.map(wsInfo => (
+            {worshipDetailForReceive.worshipOrder.map(wsInfo => (
               <li className='worshipItem' key={wsInfo.orderId}>
                 <div className='worshipItem-content'>
                   <div>{wsInfo.orderId}</div>
@@ -309,6 +363,11 @@ const DetailWorship = ({ match }) => {
                 </div>
               </li>
             ))}
+            {deleteLoading ? (
+              <div className='deleteLoadingText'>삭제되었습니다.</div>
+            ) : (
+              <div></div>
+            )}
             {activeAddButton ? (
               <li>
                 <Fab aria-label='add' onClick={() => addItemButtonClick()}>
@@ -331,12 +390,12 @@ const DetailWorship = ({ match }) => {
                         <MenuItem value=''>
                           <em></em>
                         </MenuItem>
-                        <MenuItem value={'기도'}>기도</MenuItem>
-                        <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
-                        <MenuItem value={'찬송'}>찬송</MenuItem>
-                        <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
-                        <MenuItem value={'교회소식'}>교회소식</MenuItem>
-                        <MenuItem value={'파송찬양'}></MenuItem>
+                        <MenuItem value={"기도"}>기도</MenuItem>
+                        <MenuItem value={"성경봉독"}>성경봉독</MenuItem>
+                        <MenuItem value={"찬송"}>찬송</MenuItem>
+                        <MenuItem value={"봉헌기도"}>봉헌기도</MenuItem>
+                        <MenuItem value={"교회소식"}>교회소식</MenuItem>
+                        <MenuItem value={"파송찬양"}></MenuItem>
                         <MenuItem value={directTitleInput}>직접입력</MenuItem>
                       </Select>
                     </FormControl>

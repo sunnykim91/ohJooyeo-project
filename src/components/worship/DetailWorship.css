@@ -80,3 +80,8 @@
 .presenterInput {
   margin-left: 20px;
 }
+
+.deleteLoadingText {
+  color: crimson;
+  text-align: center;
+}
