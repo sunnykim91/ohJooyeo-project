@@ -55,14 +55,28 @@
 .addItem-area {
   background: white;
   margin: 10px;
-  height: 100px;
+  padding: 10px;
 }
-.addItem-content {
+.addItem-content > div {
   background: white;
+  margin-top: 30px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
 }
 .addItem-button {
   display: flex;
   justify-content: flex-end;
+}
+
+.titleForm {
+  min-width: 120px;
+  min-height: 50px;
+}
+
+.detailContentInput {
+  margin-left: 20px;
+}
+
+.presenterInput {
+  margin-left: 20px;
 }

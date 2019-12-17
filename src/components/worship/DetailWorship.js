@@ -21,6 +21,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+
 import './DetailWorship.css';
 
 const drawerWidth = 240;
@@ -82,22 +89,58 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 0
   }
 }));
+
+const formStyles = makeStyles(theme => ({
+  formControl: {
+    minWidth: 120,
+    marginLeft: 20
+  },
+  selectEmpty: {
+    minHeight: 50
+  }
+}));
+
 const DetailWorship = ({ match }) => {
   const [worshipInfo, setWorshipInfo] = useState({
     mainPresenter: '김선휘',
     worshipOrder: [
-      { presenter: '손흥민', orderId: 1, detail: '', title: '경배와 찬양' },
-      { presenter: '데브라이너', orderId: 2, detail: '', title: '기도' },
       {
-        presenter: '박지성',
-        orderId: 3,
+        type: 0,
+        title: '경배와 찬양',
+        detail: '',
+        presenter: '손흥민',
+        standupYn: 0,
+        order: 1,
+        orderId: 1
+      },
+      {
+        type: 0,
+        title: '기도',
+        detail: '',
+        presenter: '데브라이너',
+        standupYn: 0,
+        order: 2,
+        orderId: 2
+      },
+      {
+        type: 0,
+        title: '성경봉독',
         detail: '창세기 1:1~1:10',
-        title: '성경봉독'
+        presenter: '박지성',
+        standupYn: 0,
+        order: 3,
+        orderId: 3
       }
     ]
   });
   const [activeAddButton, setActiveAddButton] = useState(true);
   const [worshipOrderNumber, setWorshiptOrderNumber] = useState(true);
+  const [title, setTitle] = useState('');
+  const [detail, setDetail] = useState('');
+  const [presenter, setPresenter] = useState('');
+  const [order, setOrder] = useState();
+
+  const [directTitleInput, setDirectTitleInput] = useState(true);
 
   const getWorshipInfo = async () => {
     const baseURL = 'http://aaaicu.synology.me:8088/OhJooYeoMVC';
@@ -115,13 +158,26 @@ const DetailWorship = ({ match }) => {
       });
   };
 
+  const formClasses = formStyles();
+
   const addItemButtonClick = () => {
     setWorshiptOrderNumber(getWorshiptOrderNumber());
     setActiveAddButton(false);
   };
 
   const addWorshipItem = () => {
-    console.log('hello');
+    setWorshipInfo(prevWorshipInfo => [
+      ...prevWorshipInfo.worshipOrder,
+      {
+        type: 0,
+        title: 'ddd',
+        detail: 'dddee',
+        presenter: 'eqwer',
+        standupYn: 0,
+        order: 4,
+        orderId: 4
+      }
+    ]);
   };
 
   const cancelAddItem = () => {
@@ -143,9 +199,22 @@ const DetailWorship = ({ match }) => {
     console.log(id);
   };
 
+  const titleChange = e => {
+    setTitle(e.target.value);
+  };
+
+  const detailChange = e => {
+    setDetail(e.target.value);
+  };
+
+  const presenterChange = e => {
+    setPresenter(e.target.value);
+  };
+
   useEffect(() => {
     // getWorshipInfo();
-  }, []);
+    console.log(worshipInfo);
+  }, [worshipInfo]);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -250,9 +319,56 @@ const DetailWorship = ({ match }) => {
               <div className='addItem-area'>
                 <div className='addItem-content'>
                   <div> 순서 : {worshipOrderNumber}</div>
-                  <div> 제목: </div>
-                  <div> 세부내용: </div>
-                  <div> 발표자 : </div>
+                  <div>
+                    제목:
+                    <FormControl className={formClasses.formControl}>
+                      <Select
+                        value={title}
+                        onChange={titleChange}
+                        displayEmpty
+                        className={formClasses.selectEmpty}
+                      >
+                        <MenuItem value=''>
+                          <em></em>
+                        </MenuItem>
+                        <MenuItem value={'기도'}>기도</MenuItem>
+                        <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
+                        <MenuItem value={'찬송'}>찬송</MenuItem>
+                        <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
+                        <MenuItem value={'교회소식'}>교회소식</MenuItem>
+                        <MenuItem value={'파송찬양'}></MenuItem>
+                        <MenuItem value={directTitleInput}>직접입력</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div>
+                    세부내용:
+                    <form
+                      noValidate
+                      autoComplete='off'
+                      className='detailContentInput'
+                    >
+                      <TextField
+                        multiline
+                        rowsMax='4'
+                        onChange={detailChange}
+                      />
+                    </form>
+                  </div>
+                  <div>
+                    발표자 :
+                    <form
+                      noValidate
+                      autoComplete='off'
+                      className='presenterInput'
+                    >
+                      <TextField
+                        multiline
+                        rowsMax='4'
+                        onChange={presenterChange}
+                      />
+                    </form>
+                  </div>
                 </div>
                 <div className='addItem-button'>
                   <IconButton
