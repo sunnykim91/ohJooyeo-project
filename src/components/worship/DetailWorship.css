@@ -57,6 +57,11 @@
   margin: 10px;
   padding: 10px;
 }
+
+.addItemButton {
+  text-align: center;
+  margin: 10px;
+}
 .addItem-content > div {
   background: white;
   margin-top: 30px;
@@ -84,4 +89,8 @@
 .deleteLoadingText {
   color: crimson;
   text-align: center;
+}
+
+.modifyItem-button {
+  text-align: right;
 }
