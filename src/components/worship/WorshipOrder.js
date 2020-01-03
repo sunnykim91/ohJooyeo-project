@@ -1,27 +1,19 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
-import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { Route, Link } from 'react-router-dom';
-
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import CancelIcon from '@material-ui/icons/Cancel';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
 import './DetailWorship.css';
-import Worshipinfo from './Worshipinfo';
-import WorshipOrder from './WorshipOrder';
-import Advertise from './Advertise';
+import DetailWorship from './DetailWorship';
 
 const drawerWidth = 240;
 
@@ -93,9 +85,7 @@ const formStyles = makeStyles(theme => ({
   }
 }));
 
-const DetailWorship = ({ match }) => {
-  const [matchId, setMatchId] = useState(match.params.id);
-  console.log(matchId);
+const WorshipOrder = ({ match }) => {
   const [worshipDetailForSend, setWorshipDetailForSend] = useState({
     'worshipInfo': {
       'churchId': 1,
@@ -143,7 +133,6 @@ const DetailWorship = ({ match }) => {
     })
       .then(response => {
         setWorshipDetailForReceive(response.data);
-        console.log(setWorshipDetailForReceive);
       })
       .catch(error => {
         console.log(error);
@@ -290,6 +279,10 @@ const DetailWorship = ({ match }) => {
     setPresenter(e.target.value);
   };
 
+  const componentClick = text => {
+    console.log(text);
+  };
+
   useEffect(() => {
     if (!initialized) {
       getWorshipInfo();
@@ -305,83 +298,179 @@ const DetailWorship = ({ match }) => {
     setOpen(false);
   };
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position='fixed'
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open
-        })}
-      >
-        <Toolbar>
-          <IconButton
-            color='inherit'
-            aria-label='open drawer'
-            onClick={handleDrawerOpen}
-            edge='start'
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant='h6' noWrap>
-            주보&광고 편집
-          </Typography>
-          <button onClick={() => saveWorshipInfo()}>저장</button>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant='persistent'
-        anchor='left'
-        open={open}
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          <Link to={`/detailWorship/worshipinfo`}>
-            <ListItem button>
-              <ListItemText>예배정보</ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={`/detailWorship/worshiporder/` + matchId}>
-            <ListItem button>
-              <ListItemText>예배순서</ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={`/detailWorship/advertise`}>
-            <ListItem button>
-              <ListItemText>광고</ListItemText>
-            </ListItem>
-          </Link>
-        </List>
-        <Divider />
-      </Drawer>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open
-        })}
-      >
-        <Route
-          path={`/detailWorship/worshiporder/:id`}
-          component={WorshipOrder}
-          exact={true}
-        />
-        <Route path={`/detailWorship/worshipinfo`} component={Worshipinfo} />
-        <Route path='/detailWorship/advertise' component={Advertise} />
-      </main>
+    <div className='worshipArea'>
+      <ul>
+        {worshipDetailForReceive.worshipOrder.map(wsInfo => (
+          <li className='worshipItem' key={wsInfo.orderId}>
+            <div className='worshipItem-content'>
+              {/* <div>{wsInfo.orderId}</div> */}
+              <div>제목 : {wsInfo.title}</div>
+              {wsInfo === '' ? <div></div> : <div>{wsInfo.detail}</div>}
+              <div>발표자 : {wsInfo.presenter}</div>
+            </div>
+            <div className='worshipItem-button'>
+              <IconButton
+                aria-label='edit'
+                onClick={() => openModifyItem(wsInfo.orderId)}
+              >
+                <EditIcon fontSize='small' />
+              </IconButton>
+              <IconButton
+                aria-label='delete'
+                onClick={() => deleteItem(wsInfo.orderId)}
+              >
+                <DeleteIcon fontSize='small' />
+              </IconButton>
+            </div>
+          </li>
+        ))}
+        {activeModify ? (
+          <div className='addItem-area'>
+            <div className='addItem-content'>
+              <div> 순서 : {orderId}</div>
+              <div>
+                제목:
+                <FormControl className={formClasses.formControl}>
+                  <Select
+                    onChange={titleChange}
+                    displayEmpty
+                    className={formClasses.selectEmpty}
+                  >
+                    <MenuItem disabled>{title}</MenuItem>
+                    <MenuItem value={'기도'}>기도</MenuItem>
+                    <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
+                    <MenuItem value={'찬송'}>찬송</MenuItem>
+                    <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
+                    <MenuItem value={'교회소식'}>교회소식</MenuItem>
+                    <MenuItem value={'파송찬양'}></MenuItem>
+                    <MenuItem value={'직접입력'}>직접입력</MenuItem>
+                  </Select>
+                  {activeDirectInput ? (
+                    <form
+                      noValidate
+                      autoComplete='off'
+                      className='detailContentInput'
+                    >
+                      <TextField
+                        multiline
+                        rowsMax='4'
+                        onChange={changeItemTitle}
+                      />
+                    </form>
+                  ) : null}
+                </FormControl>
+              </div>
+              <div>
+                세부내용:
+                <form
+                  noValidate
+                  autoComplete='off'
+                  className='detailContentInput'
+                >
+                  <TextField
+                    value={detail}
+                    multiline
+                    rowsMax='4'
+                    onChange={detailChange}
+                  />
+                </form>
+              </div>
+              <div>
+                발표자 :
+                <form noValidate autoComplete='off' className='presenterInput'>
+                  <TextField
+                    value={presenter}
+                    multiline
+                    rowsMax='4'
+                    onChange={presenterChange}
+                  />
+                </form>
+              </div>
+            </div>
+            <div className='modifyItem-button'>
+              <button onClick={() => modifyItem()}>수정완료</button>
+            </div>
+          </div>
+        ) : null}
+        {deleteLoading ? (
+          <div className='deleteLoadingText'>삭제되었습니다.</div>
+        ) : (
+          <div></div>
+        )}
+        {activeAddButton ? (
+          <li className='addItemButton'>
+            <Fab aria-label='add' onClick={() => addItemButtonClick()}>
+              <AddIcon />
+            </Fab>
+          </li>
+        ) : (
+          <div className='addItem-area'>
+            <div className='addItem-content'>
+              <div> 순서 : {worshipOrderNumber}</div>
+              <div>
+                제목:
+                <FormControl className={formClasses.formControl}>
+                  <Select
+                    onChange={titleChange}
+                    displayEmpty
+                    className={formClasses.selectEmpty}
+                  >
+                    <MenuItem value=''>
+                      <em></em>
+                    </MenuItem>
+                    <MenuItem value={'기도'}>기도</MenuItem>
+                    <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
+                    <MenuItem value={'찬송'}>찬송</MenuItem>
+                    <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
+                    <MenuItem value={'교회소식'}>교회소식</MenuItem>
+                    <MenuItem value={'파송찬양'}></MenuItem>
+                    <MenuItem value={'직접입력'}>직접입력</MenuItem>
+                  </Select>
+                  {activeDirectInput ? (
+                    <form
+                      noValidate
+                      autoComplete='off'
+                      className='detailContentInput'
+                    >
+                      <TextField
+                        multiline
+                        rowsMax='4'
+                        onChange={changeItemTitle}
+                      />
+                    </form>
+                  ) : null}
+                </FormControl>
+              </div>
+              <div>
+                세부내용:
+                <form
+                  noValidate
+                  autoComplete='off'
+                  className='detailContentInput'
+                >
+                  <TextField multiline rowsMax='4' onChange={detailChange} />
+                </form>
+              </div>
+              <div>
+                발표자 :
+                <form noValidate autoComplete='off' className='presenterInput'>
+                  <TextField multiline rowsMax='4' onChange={presenterChange} />
+                </form>
+              </div>
+            </div>
+            <div className='addItem-button'>
+              <IconButton aria-label='addItem' onClick={() => addWorshipItem()}>
+                <AddCircleIcon />
+              </IconButton>
+              <IconButton aria-label='addItem' onClick={() => cancelAddItem()}>
+                <CancelIcon />
+              </IconButton>
+            </div>
+          </div>
+        )}
+      </ul>
     </div>
   );
 };
 
-export default DetailWorship;
+export default WorshipOrder;

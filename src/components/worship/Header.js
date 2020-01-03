@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import clsx from 'clsx';
@@ -16,12 +15,24 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Route, Link } from 'react-router-dom';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import CancelIcon from '@material-ui/icons/Cancel';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import { Link } from 'react-router-dom';
+import Worshipinfo from './Worshipinfo';
+import Advertise from './Advertise';
+import WorshipOrder from './WorshipOrder';
+import { Route, Router } from 'react-router-dom';
 
 import './DetailWorship.css';
-import Worshipinfo from './Worshipinfo';
-import WorshipOrder from './WorshipOrder';
-import Advertise from './Advertise';
+import { Switch } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -93,9 +104,7 @@ const formStyles = makeStyles(theme => ({
   }
 }));
 
-const DetailWorship = ({ match }) => {
-  const [matchId, setMatchId] = useState(match.params.id);
-  console.log(matchId);
+const Header = ({ match }) => {
   const [worshipDetailForSend, setWorshipDetailForSend] = useState({
     'worshipInfo': {
       'churchId': 1,
@@ -143,7 +152,6 @@ const DetailWorship = ({ match }) => {
     })
       .then(response => {
         setWorshipDetailForReceive(response.data);
-        console.log(setWorshipDetailForReceive);
       })
       .catch(error => {
         console.log(error);
@@ -290,6 +298,10 @@ const DetailWorship = ({ match }) => {
     setPresenter(e.target.value);
   };
 
+  const componentClick = text => {
+    console.log(text);
+  };
+
   useEffect(() => {
     if (!initialized) {
       getWorshipInfo();
@@ -324,7 +336,7 @@ const DetailWorship = ({ match }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant='h6' noWrap>
-            주보&광고 편집
+            {match.params.id} 주보&광고 편집
           </Typography>
           <button onClick={() => saveWorshipInfo()}>저장</button>
         </Toolbar>
@@ -349,39 +361,25 @@ const DetailWorship = ({ match }) => {
         </div>
         <Divider />
         <List>
-          <Link to={`/detailWorship/worshipinfo`}>
-            <ListItem button>
-              <ListItemText>예배정보</ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={`/detailWorship/worshiporder/` + matchId}>
-            <ListItem button>
-              <ListItemText>예배순서</ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={`/detailWorship/advertise`}>
-            <ListItem button>
-              <ListItemText>광고</ListItemText>
-            </ListItem>
-          </Link>
+          {['worshipinfo', 'worshiporder', 'advertise'].map((text, index) => (
+            <Link to={`/detailWorship/${match.params.id}/${text}`}>
+              <ListItem button key={text}>
+                <ListItemText primary={text} />
+              </ListItem>
+            </Link>
+          ))}
         </List>
         <Divider />
       </Drawer>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open
-        })}
-      >
-        <Route
-          path={`/detailWorship/worshiporder/:id`}
-          component={WorshipOrder}
-          exact={true}
-        />
-        <Route path={`/detailWorship/worshipinfo`} component={Worshipinfo} />
-        <Route path='/detailWorship/advertise' component={Advertise} />
+      <main>
+        <Switch>
+          <Route path='/detailWorship/' component={WorshipOrder} />
+          <Route path='/detailWorship/' component={Worshipinfo} />
+          <Route path='/detailWorship/' component={Advertise} />
+        </Switch>
       </main>
     </div>
   );
 };
 
-export default DetailWorship;
+export default Header;
