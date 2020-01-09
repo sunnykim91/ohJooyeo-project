@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Axios from 'axios';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import React, { useState, useContext } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,68 +11,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
+import Modal from '@material-ui/core/Modal';
 import './DetailWorship.css';
-import DetailWorship from './DetailWorship';
-
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex'
-  },
-  appBar: {
-    background: `#2AE0A9`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  hide: {
-    display: 'none'
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth
-  },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end'
-  },
-  content: {
-    height: `100vh`,
-    flexGrow: 1,
-    padding: theme.spacing(12, 4),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    }),
-    marginLeft: -drawerWidth
-  },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    }),
-    marginLeft: 0
-  }
-}));
+import { WorshipContext } from './DetailWorship';
 
 const formStyles = makeStyles(theme => ({
   formControl: {
@@ -86,27 +26,7 @@ const formStyles = makeStyles(theme => ({
 }));
 
 const WorshipOrder = ({ match }) => {
-  const [worshipDetailForSend, setWorshipDetailForSend] = useState({
-    'worshipInfo': {
-      'churchId': 1,
-      'worshipDate': '2019-12-16',
-      'mainPresenter': '사회자',
-      'nextPresenter': '다음사회자',
-      'nextPrayer': '다음기도자',
-      'nextOffer': '다음봉헌자'
-    },
-    'worshipOrder': [],
-    'worshipAd': []
-  });
-
-  const [worshipDetailForReceive, setWorshipDetailForReceive] = useState({
-    'nextPresenter': {},
-    'mainPresenter': '',
-    'worshipOrder': [],
-    'version': 0
-  });
-
-  // const [worshipOrder, setWorshipOrder] = useState({});
+  const { state, actions } = useContext(WorshipContext);
 
   const [activeAddButton, setActiveAddButton] = useState(true);
   const [worshipOrderNumber, setWorshiptOrderNumber] = useState(true);
@@ -114,47 +34,11 @@ const WorshipOrder = ({ match }) => {
   const [detail, setDetail] = useState('');
   const [presenter, setPresenter] = useState('');
   const [orderId, setOrderId] = useState();
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [coModal, setModal] = useState(false);
+
   const [activeModify, setActiveModify] = useState(false);
 
   const [activeDirectInput, setActiveDirectInput] = useState(false);
-  const [initialized, setInitialized] = React.useState(false);
-
-  const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-
-  const getWorshipInfo = async () => {
-    const baseURL = 'http://aaaicu.synology.me:8088/OhJooYeoMVC';
-    await Axios.post(`${baseURL}/worship/info/`, {
-      churchId: 1,
-      worshipId: `${match.params.id}`,
-      version: 0
-    })
-      .then(response => {
-        setWorshipDetailForReceive(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  const saveWorshipInfo = async () => {
-    const baseURL = 'http://aaaicu.synology.me:8088/OhJooYeoMVC';
-    setWorshipDetailForSend(prevWorshipDetailForSend => {
-      prevWorshipDetailForSend.worshipOrder =
-        worshipDetailForReceive.worshipOrder;
-
-      return prevWorshipDetailForSend;
-    });
-    await Axios.post(`${baseURL}/worship/add/`, worshipDetailForSend)
-      .then(response => {
-        // setWorshipInfo(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
 
   const formClasses = formStyles();
 
@@ -164,7 +48,7 @@ const WorshipOrder = ({ match }) => {
   };
 
   const addWorshipItem = () => {
-    setWorshipDetailForReceive(prevworshipDetailForReceive => {
+    actions.setWorshipDetailForReceive(prevworshipDetailForReceive => {
       prevworshipDetailForReceive.worshipOrder.push({
         type: 0,
         title,
@@ -189,10 +73,10 @@ const WorshipOrder = ({ match }) => {
   };
 
   const getWorshiptOrderNumber = () => {
-    return !worshipDetailForReceive.worshipOrder.length
+    return !state.worshipDetailForReceive.worshipOrder.length
       ? 1
       : Math.max(
-          ...worshipDetailForReceive.worshipOrder.map(
+          ...state.worshipDetailForReceive.worshipOrder.map(
             worship => worship.orderId
           )
         ) + 1;
@@ -201,33 +85,34 @@ const WorshipOrder = ({ match }) => {
   const openModifyItem = id => {
     setTitle(
       () =>
-        worshipDetailForReceive.worshipOrder.filter(
+        state.worshipDetailForReceive.worshipOrder.filter(
           worship => worship.orderId === id
         )[0].title
     );
     setDetail(
       () =>
-        worshipDetailForReceive.worshipOrder.filter(
+        state.worshipDetailForReceive.worshipOrder.filter(
           worship => worship.orderId === id
         )[0].detail
     );
     setPresenter(
       () =>
-        worshipDetailForReceive.worshipOrder.filter(
+        state.worshipDetailForReceive.worshipOrder.filter(
           worship => worship.orderId === id
         )[0].presenter
     );
     setOrderId(
       () =>
-        worshipDetailForReceive.worshipOrder.filter(
+        state.worshipDetailForReceive.worshipOrder.filter(
           worship => worship.orderId === id
         )[0].orderId
     );
     setActiveModify(true);
+    modalOpen();
   };
 
   const modifyItem = () => {
-    setWorshipDetailForReceive(prevWorshipDetailForReceive => {
+    actions.setWorshipDetailForReceive(prevWorshipDetailForReceive => {
       prevWorshipDetailForReceive.worshipOrder.map(worship =>
         worship.orderId === orderId
           ? ((worship.title = title),
@@ -247,14 +132,12 @@ const WorshipOrder = ({ match }) => {
   };
 
   const deleteItem = id => {
-    setWorshipDetailForReceive({
-      ...worshipDetailForReceive,
-      'worshipOrder': worshipDetailForReceive.worshipOrder.filter(
+    actions.setWorshipDetailForReceive({
+      ...state.worshipDetailForReceive,
+      'worshipOrder': state.worshipDetailForReceive.worshipOrder.filter(
         worship => worship.orderId !== id
       )
     });
-    // setDeleteLoading(true);
-    // setTimeout(() => setDeleteLoading(false), 1500);
   };
 
   const titleChange = e => {
@@ -279,28 +162,18 @@ const WorshipOrder = ({ match }) => {
     setPresenter(e.target.value);
   };
 
-  const componentClick = text => {
-    console.log(text);
+  const modalOpen = () => {
+    setModal(true);
   };
 
-  useEffect(() => {
-    if (!initialized) {
-      getWorshipInfo();
-      setInitialized(true);
-    }
-  }, [worshipDetailForReceive]);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const modalClose = () => {
+    setModal(false);
   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   return (
     <div className='worshipArea'>
       <ul>
-        {worshipDetailForReceive.worshipOrder.map(wsInfo => (
+        {state.worshipDetailForReceive.worshipOrder.map(wsInfo => (
           <li className='worshipItem' key={wsInfo.orderId}>
             <div className='worshipItem-content'>
               {/* <div>{wsInfo.orderId}</div> */}
@@ -325,78 +198,84 @@ const WorshipOrder = ({ match }) => {
           </li>
         ))}
         {activeModify ? (
-          <div className='addItem-area'>
-            <div className='addItem-content'>
-              <div> 순서 : {orderId}</div>
-              <div>
-                제목:
-                <FormControl className={formClasses.formControl}>
-                  <Select
-                    onChange={titleChange}
-                    displayEmpty
-                    className={formClasses.selectEmpty}
-                  >
-                    <MenuItem disabled>{title}</MenuItem>
-                    <MenuItem value={'기도'}>기도</MenuItem>
-                    <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
-                    <MenuItem value={'찬송'}>찬송</MenuItem>
-                    <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
-                    <MenuItem value={'교회소식'}>교회소식</MenuItem>
-                    <MenuItem value={'파송찬양'}></MenuItem>
-                    <MenuItem value={'직접입력'}>직접입력</MenuItem>
-                  </Select>
-                  {activeDirectInput ? (
-                    <form
-                      noValidate
-                      autoComplete='off'
-                      className='detailContentInput'
+          <Modal
+            aria-labelledby='simple-modal-title'
+            aria-describedby='simple-modal-description'
+            open={coModal}
+            onClose={modalClose}
+          >
+            <div className='addItem-area'>
+              <div className='addItem-content'>
+                <div> 순서 : {orderId}</div>
+                <div>
+                  제목:
+                  <FormControl className={formClasses.formControl}>
+                    <Select
+                      onChange={titleChange}
+                      displayEmpty
+                      className={formClasses.selectEmpty}
                     >
-                      <TextField
-                        multiline
-                        rowsMax='4'
-                        onChange={changeItemTitle}
-                      />
-                    </form>
-                  ) : null}
-                </FormControl>
+                      <MenuItem disabled>{title}</MenuItem>
+                      <MenuItem value={'기도'}>기도</MenuItem>
+                      <MenuItem value={'성경봉독'}>성경봉독</MenuItem>
+                      <MenuItem value={'찬송'}>찬송</MenuItem>
+                      <MenuItem value={'봉헌기도'}>봉헌기도</MenuItem>
+                      <MenuItem value={'교회소식'}>교회소식</MenuItem>
+                      <MenuItem value={'파송찬양'}></MenuItem>
+                      <MenuItem value={'직접입력'}>직접입력</MenuItem>
+                    </Select>
+                    {activeDirectInput ? (
+                      <form
+                        noValidate
+                        autoComplete='off'
+                        className='detailContentInput'
+                      >
+                        <TextField
+                          multiline
+                          rowsMax='4'
+                          onChange={changeItemTitle}
+                        />
+                      </form>
+                    ) : null}
+                  </FormControl>
+                </div>
+                <div>
+                  세부내용:
+                  <form
+                    noValidate
+                    autoComplete='off'
+                    className='detailContentInput'
+                  >
+                    <TextField
+                      value={detail}
+                      multiline
+                      rowsMax='4'
+                      onChange={detailChange}
+                    />
+                  </form>
+                </div>
+                <div>
+                  발표자 :
+                  <form
+                    noValidate
+                    autoComplete='off'
+                    className='presenterInput'
+                  >
+                    <TextField
+                      value={presenter}
+                      multiline
+                      rowsMax='4'
+                      onChange={presenterChange}
+                    />
+                  </form>
+                </div>
               </div>
-              <div>
-                세부내용:
-                <form
-                  noValidate
-                  autoComplete='off'
-                  className='detailContentInput'
-                >
-                  <TextField
-                    value={detail}
-                    multiline
-                    rowsMax='4'
-                    onChange={detailChange}
-                  />
-                </form>
-              </div>
-              <div>
-                발표자 :
-                <form noValidate autoComplete='off' className='presenterInput'>
-                  <TextField
-                    value={presenter}
-                    multiline
-                    rowsMax='4'
-                    onChange={presenterChange}
-                  />
-                </form>
+              <div className='modifyItem-button'>
+                <button onClick={() => modifyItem()}>수정완료</button>
               </div>
             </div>
-            <div className='modifyItem-button'>
-              <button onClick={() => modifyItem()}>수정완료</button>
-            </div>
-          </div>
+          </Modal>
         ) : null}
-        {deleteLoading ? (
-          <div className='deleteLoadingText'>삭제되었습니다.</div>
-        ) : (
-          <div></div>
-        )}
         {activeAddButton ? (
           <li className='addItemButton'>
             <Fab aria-label='add' onClick={() => addItemButtonClick()}>

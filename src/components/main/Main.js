@@ -21,9 +21,7 @@ const Main = () => {
       churchId: 1
     })
       .then(response => {
-        console.log(response.data);
         setJuboList(response.data);
-        console.log(juboList);
         // for (let i = 0; i < juboList.length; i++) {
         //   Axios.post(`${baseURL}/worship/info`, {
         //     'churchId': 1,

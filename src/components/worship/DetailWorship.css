@@ -1,3 +1,13 @@
+.mainOpen {
+  margin-left: 240px;
+  margin-top: 80px;
+}
+
+.mainClose {
+  margin-left: 0px;
+  margin-top: 80px;
+}
+
 .worshipArea {
   background: linear-gradient(
     135deg,
